@@ -5,12 +5,44 @@
 
 
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
+
+	std::vector<float> arr;
+	arr.resize(5);
+
+	arr[0] = 4.5f;
+	arr[1] = -4.5f;
+	arr[2] = 0.3f;
+	arr[3] = 1.1f;
+	arr[4] = 4.0f;
+
+
+	
 	/////////////////////////////IGNORE THIS SECTION OF CODE/////////////////////////////////
 	ContextHelper::init_context_all(800, 600, "Rope Survival",4);
 	ContextHelper::print_opengl_info();
 	
+
+	GPUBuffer my_gpu_buffer;
+	my_gpu_buffer.allocate(sizeof(float) * arr.size());
+
+	my_gpu_buffer.write_to_gpu(arr.data(), 0, sizeof(float) * arr.size());
+
+	std::vector<float> arr_back;
+	arr_back.resize(5);
+
+	float clear_value = 9.9f;
+	//my_gpu_buffer.clear_to_value({ GL_R32F,GL_RED,GL_FLOAT,1 }, &clear_value);
+	my_gpu_buffer.write_to_gpu(&clear_value, 3* sizeof(float), sizeof(float));
+
+	my_gpu_buffer.read_from_gpu(arr_back.data(), 0, sizeof(float) * arr_back.size());
+
+	std::cout << arr_back[0] << " " << arr_back[1] << " " << arr_back[2] << " " << arr_back[3] << " " << arr_back[4] << std::endl;
+
+
+	exit(0);
+
 
 	while (ContextHelper::should_not_close_window()) //main/render loop
 	{
